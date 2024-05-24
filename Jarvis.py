@@ -27,7 +27,7 @@ if uploaded_file:
             import pandas as pd
             df = pd.read_csv(uploaded_file)
             st.dataframe(df)
-        elif uploaded_file.type == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"]:
+        elif uploaded_file.type == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
             df = pd.read_excel(uploaded_file)
             st.dataframe(df)
     st.session_state.messages.append({"role": "user", "content": f"Uploaded file: {uploaded_file.name}"})
