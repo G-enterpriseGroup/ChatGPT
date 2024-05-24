@@ -1,10 +1,27 @@
 from openai import OpenAI
 import streamlit as st
+import requests
 
 st.title("gpt-3.5-turbo-16k-0613")
 
 # Correctly accessing the API key from secrets
-client = OpenAI(api_key="sk-balraj-KLoW4HxnPDr6efjrLIFlT3BlbkFJFey4fhZcJMWgg1zIqmyB")
+api_key = "sk-balraj-KLoW4HxnPDr6efjrLIFlT3BlbkFJFey4fhZcJMWgg1zIqmyB"
+client = OpenAI(api_key=api_key)
+
+def get_api_limits(api_key):
+    headers = {
+        "Authorization": f"Bearer {api_key}"
+    }
+    response = requests.get("https://api.openai.com/v1/usage", headers=headers)
+    if response.status_code == 200:
+        data = response.json()
+        return data.get('daily_limit', 'Unknown'), data.get('remaining', 'Unknown')
+    else:
+        return 'Unknown', 'Unknown'
+
+daily_limit, remaining_limit = get_api_limits(api_key)
+st.sidebar.write(f"Daily Limit: {daily_limit}")
+st.sidebar.write(f"Remaining Limit: {remaining_limit}")
 
 if "openai_model" not in st.session_state:
     st.session_state["openai_model"] = "gpt-3.5-turbo-16k-0613"
