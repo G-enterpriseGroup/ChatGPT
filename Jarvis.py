@@ -27,7 +27,7 @@ if uploaded_file:
             import pandas as pd
             df = pd.read_csv(uploaded_file)
             st.dataframe(df)
-        elif uploaded_file.type == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+        elif uploaded_file.type == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"]:
             df = pd.read_excel(uploaded_file)
             st.dataframe(df)
     st.session_state.messages.append({"role": "user", "content": f"Uploaded file: {uploaded_file.name}"})
@@ -46,5 +46,15 @@ if prompt := st.chat_input("What is up?"):
             ],
             stream=True,
         )
-        response = st.write_stream(stream)
-    st.session_state.messages.append({"role": "assistant", "content": response})
+        
+        # Collect the response stream and limit to 300 characters
+        response_text = ""
+        for chunk in stream:
+            response_text += chunk["choices"][0]["delta"]["content"]
+            if len(response_text) >= 300:
+                response_text = response_text[:300]
+                break
+        
+        st.markdown(response_text)
+        
+    st.session_state.messages.append({"role": "assistant", "content": response_text})
