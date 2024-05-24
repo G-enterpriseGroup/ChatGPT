@@ -16,6 +16,22 @@ for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
+# Adding file uploader
+uploaded_file = st.file_uploader("Upload a file (table or screenshot)", type=["png", "jpg", "jpeg", "csv", "xlsx"])
+if uploaded_file:
+    if uploaded_file.type in ["image/png", "image/jpeg"]:
+        st.image(uploaded_file)
+    elif uploaded_file.type in ["text/csv", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"]:
+        st.write(f"File uploaded: {uploaded_file.name}")
+        if uploaded_file.type == "text/csv":
+            import pandas as pd
+            df = pd.read_csv(uploaded_file)
+            st.dataframe(df)
+        elif uploaded_file.type == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+            df = pd.read_excel(uploaded_file)
+            st.dataframe(df)
+    st.session_state.messages.append({"role": "user", "content": f"Uploaded file: {uploaded_file.name}"})
+
 if prompt := st.chat_input("What is up?"):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
