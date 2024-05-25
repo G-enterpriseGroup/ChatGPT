@@ -1,13 +1,13 @@
 from openai import OpenAI
 import streamlit as st
 
-st.title("gpt-4-32k")
+st.title("gpt-4o-2024-05-13")
 
 # Correctly accessing the API key from secrets
 client = OpenAI(api_key="sk-balraj-KLoW4HxnPDr6efjrLIFlT3BlbkFJFey4fhZcJMWgg1zIqmyB")
 
 if "openai_model" not in st.session_state:
-    st.session_state["openai_model"] = "gpt-4-32k"
+    st.session_state["openai_model"] = "gpt-4o-2024-05-13"
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -32,6 +32,6 @@ if prompt := st.chat_input("What is up?"):
         )
         response = ""
         for chunk in stream:
-            response += chunk["choices"][0]["delta"].get("content", "")
-            st.markdown(response)
+            response += chunk.choices[0].delta.get("content", "")
+            st.write(response)
     st.session_state.messages.append({"role": "assistant", "content": response})
