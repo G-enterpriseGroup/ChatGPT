@@ -2,13 +2,13 @@ import openai
 import streamlit as st
 import pandas as pd
 
-st.title("gpt-3.5-turbo-16k-0613")
+st.title("gpt")
 
 # Correctly accessing the API key from secrets
 client = openai.OpenAI(api_key="sk-balraj-KLoW4HxnPDr6efjrLIFlT3BlbkFJFey4fhZcJMWgg1zIqmyB")
 
 if "openai_model" not in st.session_state:
-    st.session_state["openai_model"] = "gpt-3.5-turbo-16k-0613"
+    st.session_state["openai_model"] = "gpt-4o-2024-05-13"
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
