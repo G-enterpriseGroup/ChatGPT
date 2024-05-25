@@ -12,7 +12,7 @@ if passcode != "652333":
     st.warning("Incorrect passcode. Access denied.")
 else:
     if "openai_model" not in st.session_state:
-        st.session_state["openai_model"] = "gpt-3.5-turbo-16k-0613"
+        st.session_state["openai_model"] = "gpt-4o-2024-05-13"
 
     if "messages" not in st.session_state:
         st.session_state.messages = []
