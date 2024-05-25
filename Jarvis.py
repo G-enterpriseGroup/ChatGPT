@@ -22,17 +22,16 @@ if prompt := st.chat_input("What is up?"):
         st.markdown(prompt)
 
     with st.chat_message("assistant"):
-        stream = client.chat.completions.create(
+        response = ""
+        for chunk in client.chat_completions.create(
             model=st.session_state["openai_model"],
             messages=[
                 {"role": m["role"], "content": m["content"]}
                 for m in st.session_state.messages
             ],
             stream=True,
-        )
-        response = ""
-        for chunk in stream:
+        ):
             if hasattr(chunk.choices[0], 'delta') and 'content' in chunk.choices[0].delta:
                 response += chunk.choices[0].delta['content']
                 st.write(response)
-    st.session_state.messages.append({"role": "assistant", "content": response})
+        st.session_state.messages.append({"role": "assistant", "content": response})
