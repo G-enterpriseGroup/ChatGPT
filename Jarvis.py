@@ -32,6 +32,7 @@ if prompt := st.chat_input("What is up?"):
         )
         response = ""
         for chunk in stream:
-            response += chunk.choices[0].delta.get("content", "")
-            st.write(response)
+            if hasattr(chunk.choices[0], 'delta') and 'content' in chunk.choices[0].delta:
+                response += chunk.choices[0].delta['content']
+                st.write(response)
     st.session_state.messages.append({"role": "assistant", "content": response})
