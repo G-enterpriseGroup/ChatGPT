@@ -2,13 +2,14 @@ import openai
 import streamlit as st
 import pandas as pd
 
-st.title("gpt")
+st.title("GPT Chat")
 
 # Correctly accessing the API key from secrets
-client = openai.OpenAI(api_key="sk-balraj-KLoW4HxnPDr6efjrLIFlT3BlbkFJFey4fhZcJMWgg1zIqmyB")
+api_key = st.secrets["sk-balraj-KLoW4HxnPDr6efjrLIFlT3BlbkFJFey4fhZcJMWgg1zIqmyB"]
+openai.api_key = api_key
 
 if "openai_model" not in st.session_state:
-    st.session_state["openai_model"] = "gpt-4o-2024-05-13"
+    st.session_state["openai_model"] = "gpt-4-2024-05-13"
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
