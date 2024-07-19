@@ -13,7 +13,7 @@ datetime
 kaleido
 seaborn
 pyperclip
-openai>=1.0.0
+openai
 langchain
 python-decouple
 streamlit-chat
