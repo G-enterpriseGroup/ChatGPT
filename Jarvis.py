@@ -5,16 +5,20 @@ from io import StringIO
 from PIL import Image
 import base64
 
+# Configuration
+OPENAI_API_KEY = "sk-balraj-KLoW4HxnPDr6efjrLIFlT3BlbkFJFey4fhZcJMWgg1zIqmyB"
+MODEL = "gpt-3.5-turbo-16k-0613"
+COST_PER_1K_TOKENS = 0.02  # Adjust this based on the current pricing from OpenAI
+
+# Initialize OpenAI client
+client = openai.OpenAI(api_key=OPENAI_API_KEY)
+
 st.set_page_config(layout="wide")
-
-# Correctly accessing the API key from secrets
-client = openai.OpenAI(api_key="sk-balraj-KLoW4HxnPDr6efjrLIFlT3BlbkFJFey4fhZcJMWgg1zIqmyB")
-
-if "openai_model" not in st.session_state:
-    st.session_state["openai_model"] = "FRIDAY"
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
+    st.session_state.total_tokens_used = 0
+    st.session_state.total_cost = 0.0
 
 def display_chat():
     for message in st.session_state.messages:
@@ -25,6 +29,9 @@ def encode_image_to_base64(image):
     buffered = StringIO()
     image.save(buffered, format="PNG")
     return base64.b64encode(buffered.getvalue()).decode()
+
+def calculate_cost(tokens):
+    return (tokens / 1000) * COST_PER_1K_TOKENS
 
 uploaded_files = st.sidebar.file_uploader("Upload images", accept_multiple_files=True, type=["png", "jpg", "jpeg"])
 
@@ -58,13 +65,21 @@ if prompt := st.chat_input("Enter your message"):
 
     with st.chat_message("assistant"):
         response = client.ChatCompletion.create(
-            model=st.session_state["openai_model"],
+            model=MODEL,
             messages=[
                 {"role": m["role"], "content": m["content"]}
                 for m in st.session_state.messages
             ],
         )
         response_content = response['choices'][0]['message']['content']
+        response_tokens = response['usage']['total_tokens']
+        
+        st.session_state.total_tokens_used += response_tokens
+        st.session_state.total_cost += calculate_cost(response_tokens)
+        
         st.markdown(response_content)
     st.session_state.messages.append({"role": "assistant", "content": response_content})
 
+# Display API usage cost
+st.sidebar.write(f"Total Tokens Used: {st.session_state.total_tokens_used}")
+st.sidebar.write(f"Total Cost: ${st.session_state.total_cost:.2f}")
