@@ -76,8 +76,8 @@ if prompt := st.chat_input("Enter your message"):
                 for m in st.session_state.messages
             ],
         )
-        response_content = response['choices'][0]['message']['content']
-        response_tokens = response['usage']['total_tokens']
+        response_content = response.choices[0].message["content"]
+        response_tokens = response.usage["total_tokens"]
         
         st.session_state.total_tokens_used += response_tokens
         st.session_state.total_cost += calculate_cost(response_tokens)
