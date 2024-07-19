@@ -1,26 +1,27 @@
 import openai
 import streamlit as st
 import pandas as pd
-from io import BytesIO, StringIO
+from io import BytesIO
 from PIL import Image
 import base64
 
 # Configuration
 OPENAI_API_KEY = "sk-balraj-KLoW4HxnPDr6efjrLIFlT3BlbkFJFey4fhZcJMWgg1zIqmyB"
-MODEL = "gpt-3.5-turbo-0125"
-COST_PER_1K_INPUT_TOKENS = 0.0005  # Cost per 1,000 input tokens
-COST_PER_1K_OUTPUT_TOKENS = 0.0015  # Cost per 1,000 output tokens
+MODEL = "gpt-3.5-turbo-16k-0613"
+COST_PER_1K_TOKENS = 0.02  # Adjust this based on the current pricing from OpenAI
 
 # Initialize OpenAI client
-openai.api_key = OPENAI_API_KEY
+client = openai.OpenAI(api_key=OPENAI_API_KEY)
 
 st.set_page_config(layout="wide")
 
 # Initialize session state variables
 if "messages" not in st.session_state:
     st.session_state.messages = []
+
 if "total_tokens_used" not in st.session_state:
     st.session_state.total_tokens_used = 0
+
 if "total_cost" not in st.session_state:
     st.session_state.total_cost = 0.0
 
@@ -34,8 +35,8 @@ def encode_image_to_base64(image):
     image.save(buffered, format="PNG")
     return base64.b64encode(buffered.getvalue()).decode()
 
-def calculate_cost(input_tokens, output_tokens):
-    return (input_tokens * COST_PER_1K_INPUT_TOKENS / 1000) + (output_tokens * COST_PER_1K_OUTPUT_TOKENS / 1000)
+def calculate_cost(tokens):
+    return (tokens / 1000) * COST_PER_1K_TOKENS
 
 uploaded_files = st.sidebar.file_uploader("Upload images", accept_multiple_files=True, type=["png", "jpg", "jpeg"])
 
@@ -68,7 +69,7 @@ if prompt := st.chat_input("Enter your message"):
         st.markdown(prompt)
 
     with st.chat_message("assistant"):
-        response = openai.ChatCompletion.create(
+        response = client.ChatCompletion.create(
             model=MODEL,
             messages=[
                 {"role": m["role"], "content": m["content"]}
@@ -76,11 +77,10 @@ if prompt := st.chat_input("Enter your message"):
             ],
         )
         response_content = response['choices'][0]['message']['content']
-        input_tokens = response['usage']['prompt_tokens']
-        output_tokens = response['usage']['completion_tokens']
+        response_tokens = response['usage']['total_tokens']
         
-        st.session_state.total_tokens_used += input_tokens + output_tokens
-        st.session_state.total_cost += calculate_cost(input_tokens, output_tokens)
+        st.session_state.total_tokens_used += response_tokens
+        st.session_state.total_cost += calculate_cost(response_tokens)
         
         st.markdown(response_content)
     st.session_state.messages.append({"role": "assistant", "content": response_content})
