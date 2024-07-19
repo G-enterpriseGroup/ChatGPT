@@ -72,9 +72,9 @@ if prompt := st.chat_input("Enter your message"):
         response = openai.ChatCompletion.create(
             model=MODEL,
             messages=[
-                {"role": m["role"], "content": m["content"]}
-                for m in st.session_state.messages
-            ],
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": prompt}
+            ]
         )
         response_content = response.choices[0].message["content"]
         response_tokens = response.usage["total_tokens"]
