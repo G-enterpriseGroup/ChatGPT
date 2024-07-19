@@ -29,7 +29,7 @@ if uploaded_files:
         st.image(image, caption=uploaded_file.name)
 
 st.write("Copy and paste the selected cells from your Excel sheet below:")
-excel_data = st.text_area("Paste Excel Data Here", height=200)
+excel_data = st.text_area("Paste Excel Data Here", height=100)
 
 if excel_data:
     # Process the pasted Excel data
