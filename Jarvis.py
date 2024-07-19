@@ -27,6 +27,10 @@ if uploaded_files:
     for uploaded_file in uploaded_files:
         image = Image.open(uploaded_file)
         st.image(image, caption=uploaded_file.name)
+        st.session_state.messages.append({
+            "role": "user",
+            "content": f"![{uploaded_file.name}](data:image/png;base64,{uploaded_file.getvalue().encode('base64').decode()})"
+        })
 
 st.write("Copy and paste the selected cells from your Excel sheet below:")
 excel_data = st.text_area("Paste Excel Data Here", height=10)
@@ -37,6 +41,7 @@ if excel_data:
         df = pd.read_csv(StringIO(excel_data), sep="\t")
         st.write("Here is the data you pasted:")
         st.dataframe(df)
+        st.session_state.messages.append({"role": "user", "content": df.to_markdown()})
     except Exception as e:
         st.error(f"Error processing Excel data: {e}")
 
