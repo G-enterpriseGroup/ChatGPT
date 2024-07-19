@@ -3,7 +3,6 @@ import streamlit as st
 import pandas as pd
 from io import StringIO
 from PIL import Image
-import base64
 
 st.set_page_config(layout="wide")
 
@@ -22,7 +21,14 @@ for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-st.write("Upload or paste the selected cells from your Excel sheet below:")
+uploaded_files = st.file_uploader("Upload images", accept_multiple_files=True, type=["png", "jpg", "jpeg"])
+
+if uploaded_files:
+    for uploaded_file in uploaded_files:
+        image = Image.open(uploaded_file)
+        st.image(image, caption=uploaded_file.name)
+
+st.write("Copy and paste the selected cells from your Excel sheet below:")
 excel_data = st.text_area("Paste Excel Data Here", height=200)
 
 if excel_data:
@@ -33,24 +39,6 @@ if excel_data:
         st.dataframe(df)
     except Exception as e:
         st.error(f"Error processing Excel data: {e}")
-
-uploaded_files = st.file_uploader("Upload images", accept_multiple_files=True, type=["png", "jpg", "jpeg"])
-
-if uploaded_files:
-    for uploaded_file in uploaded_files:
-        image = Image.open(uploaded_file)
-        st.image(image, caption=uploaded_file.name)
-
-st.write("Paste your image in base64 format below:")
-base64_image_data = st.text_area("Paste Image in Base64 Here", height=200)
-
-if base64_image_data:
-    try:
-        image_data = base64.b64decode(base64_image_data)
-        image = Image.open(BytesIO(image_data))
-        st.image(image, caption="Pasted Image")
-    except Exception as e:
-        st.error(f"Error processing image data: {e}")
 
 if prompt := st.chat_input("What is up?"):
     st.session_state.messages.append({"role": "user", "content": prompt})
