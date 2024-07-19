@@ -1,7 +1,7 @@
 import openai
 import streamlit as st
 import pandas as pd
-from io import BytesIO
+from io import BytesIO, StringIO
 from PIL import Image
 import base64
 
@@ -11,7 +11,7 @@ MODEL = "gpt-3.5-turbo-16k-0613"
 COST_PER_1K_TOKENS = 0.02  # Adjust this based on the current pricing from OpenAI
 
 # Initialize OpenAI client
-client = openai.OpenAI(api_key=OPENAI_API_KEY)
+openai.api_key = OPENAI_API_KEY
 
 st.set_page_config(layout="wide")
 
@@ -69,7 +69,7 @@ if prompt := st.chat_input("Enter your message"):
         st.markdown(prompt)
 
     with st.chat_message("assistant"):
-        response = client.ChatCompletion.create(
+        response = openai.ChatCompletion.create(
             model=MODEL,
             messages=[
                 {"role": m["role"], "content": m["content"]}
