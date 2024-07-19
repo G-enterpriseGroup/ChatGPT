@@ -1,7 +1,7 @@
 import openai
 import streamlit as st
 import pandas as pd
-from io import StringIO
+from io import BytesIO
 from PIL import Image
 import base64
 
@@ -15,9 +15,14 @@ client = openai.OpenAI(api_key=OPENAI_API_KEY)
 
 st.set_page_config(layout="wide")
 
+# Initialize session state variables
 if "messages" not in st.session_state:
     st.session_state.messages = []
+
+if "total_tokens_used" not in st.session_state:
     st.session_state.total_tokens_used = 0
+
+if "total_cost" not in st.session_state:
     st.session_state.total_cost = 0.0
 
 def display_chat():
@@ -26,7 +31,7 @@ def display_chat():
             st.markdown(message["content"])
 
 def encode_image_to_base64(image):
-    buffered = StringIO()
+    buffered = BytesIO()
     image.save(buffered, format="PNG")
     return base64.b64encode(buffered.getvalue()).decode()
 
