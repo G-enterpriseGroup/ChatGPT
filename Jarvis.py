@@ -7,7 +7,7 @@ import base64
 
 # Configuration
 OPENAI_API_KEY = "sk-balraj-KLoW4HxnPDr6efjrLIFlT3BlbkFJFey4fhZcJMWgg1zIqmyB"
-MODEL = "gpt-3.5-turbo-16k-0613"
+MODEL = "gpt-3.5-turbo-16k"
 COST_PER_1K_TOKENS = 0.02  # Adjust this based on the current pricing from OpenAI
 
 # Initialize OpenAI client
