@@ -2,6 +2,9 @@ import openai
 import streamlit as st
 import pandas as pd
 from io import StringIO
+from PIL import Image
+
+st.set_page_config(layout="wide")
 
 st.title("GPT-3.5-turbo-16k-0613 with Image and Excel Data Input")
 
