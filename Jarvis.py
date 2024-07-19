@@ -1,8 +1,9 @@
 import openai
 import streamlit as st
-from PIL import Image
+import pandas as pd
+from io import StringIO
 
-st.title("GPT-3.5-turbo-16k-0613 with Image Upload")
+st.title("GPT-3.5-turbo-16k-0613 with Image and Excel Data Input")
 
 # Correctly accessing the API key from secrets
 client = openai.OpenAI(api_key="sk-balraj-KLoW4HxnPDr6efjrLIFlT3BlbkFJFey4fhZcJMWgg1zIqmyB")
@@ -23,6 +24,18 @@ if uploaded_files:
     for uploaded_file in uploaded_files:
         image = Image.open(uploaded_file)
         st.image(image, caption=uploaded_file.name)
+
+st.write("Copy and paste the selected cells from your Excel sheet below:")
+excel_data = st.text_area("Paste Excel Data Here", height=200)
+
+if excel_data:
+    # Process the pasted Excel data
+    try:
+        df = pd.read_csv(StringIO(excel_data), sep="\t")
+        st.write("Here is the data you pasted:")
+        st.dataframe(df)
+    except Exception as e:
+        st.error(f"Error processing Excel data: {e}")
 
 if prompt := st.chat_input("What is up?"):
     st.session_state.messages.append({"role": "user", "content": prompt})
