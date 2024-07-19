@@ -12,7 +12,7 @@ st.title("GPT-3.5-turbo-16k-0613 with Image and Excel Data Input")
 client = openai.OpenAI(api_key="sk-balraj-KLoW4HxnPDr6efjrLIFlT3BlbkFJFey4fhZcJMWgg1zIqmyB")
 
 if "openai_model" not in st.session_state:
-    st.session_state["openai_model"] = "gpt-3.5-turbo-16k-0613"
+    st.session_state["openai_model"] = "FRIDAY"
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -29,7 +29,7 @@ if uploaded_files:
         st.image(image, caption=uploaded_file.name)
 
 st.write("Copy and paste the selected cells from your Excel sheet below:")
-excel_data = st.text_area("Paste Excel Data Here", height=200)
+excel_data = st.text_area("Paste Excel Data Here", height=10)
 
 if excel_data:
     # Process the pasted Excel data
